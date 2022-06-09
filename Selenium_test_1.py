@@ -1,5 +1,6 @@
 import time
-
+# from selenium import webdriver #подключение библиотеки
+# driver = webdriver.Firefox() #получение объекта веб-драйвера для нужного браузера
 
 def test_search_example(selenium):
     """ Search some phrase in google and make a screenshot of the page. """
@@ -7,7 +8,7 @@ def test_search_example(selenium):
     # Open google search page:
     selenium.get('https://google.com')
 
-    time.sleep(10)  # just for demo purposes, do NOT repeat it on real projects!
+    time.sleep(3)  # just for demo purposes, do NOT repeat it on real projects!
 
     # Find the field for search text input:
     search_input = selenium.find_element_by_name('q')
@@ -16,13 +17,13 @@ def test_search_example(selenium):
     search_input.clear()
     search_input.send_keys('first test')
 
-    time.sleep(10)  # just for demo purposes, do NOT repeat it on real projects!
+    time.sleep(3)  # just for demo purposes, do NOT repeat it on real projects!
 
     # Click Search:
     search_button = selenium.find_element_by_name("btnK")
-    search_button.click()
+    search_button.submit()
 
-    time.sleep(10)  # just for demo purposes, do NOT repeat it on real projects!
+    time.sleep(3)  # just for demo purposes, do NOT repeat it on real projects!
 
     # Make the screenshot of browser window:
     selenium.save_screenshot('result.png')

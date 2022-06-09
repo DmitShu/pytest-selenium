@@ -1,3 +1,5 @@
+pip install pytest-selenium
+
 pytest --driver Firefox --driver-path D:\GameSoft\Python\geckodriver.exe
 
-python -m pytest -v --driver Firefox --driver-path D:\GameSoft\Python\geckodriver.exe Selenium_test.py
+python -m pytest -v --driver Firefox --driver-path D:\GameSoft\Python\geckodriver.exe Selenium_test_1.py
