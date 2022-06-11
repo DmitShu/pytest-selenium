@@ -1,6 +1,13 @@
 import time
 from logins import *
 
+# For Brave browser
+# import pytest
+# @pytest.fixture
+# def chrome_options(chrome_options):
+#     chrome_options.binary_location = 'C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe'
+#     return chrome_options
+
 def test_petfriends(selenium):
     # Open PetFriends base page:
     selenium.get(url)
