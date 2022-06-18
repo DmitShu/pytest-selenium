@@ -40,26 +40,24 @@ def test_chk_my_pets():
    petcount = pytest.driver.find_element_by_css_selector('.\\.col-sm-4.left').text.split('\n')[1]
    petcount = int(petcount.split('Питомцев: ')[1])
 
-   print(petcount)
-
    images = pytest.driver.find_elements_by_css_selector('.table-hover tbody th img')
-
-   for i in range(len(images)):
-      print(images[i].get_attribute('src'))
-   assert 1 == 1
+   data = pytest.driver.find_elements_by_css_selector('.table-hover tbody tr')
 
 
+   # Присутствуют все питомцы.
+   assert len(images) == petcount
 
-   # images = pytest.driver.find_elements_by_css_selector('.card-deck .card-img-top')
-   # names = pytest.driver.find_elements_by_css_selector('.card-deck .card-title')
-   # descriptions = pytest.driver.find_elements_by_css_selector('.card-deck .card-text')
-   # for i in range(len(names)):
-   #    assert images[i].get_attribute('src') != ''
-   #    assert names[i].text != ''
-   #    assert descriptions[i].text != ''
-   #    assert ', ' in descriptions[i]
-   #    parts = descriptions[i].text.split(", ")
-   #    assert len(parts[0]) > 0
-   #    assert len(parts[1]) > 0
+
+   # Хотя бы у половины питомцев есть фото.
+   withphoto = 0
+   for i in range(petcount):
+      if (images[i].get_attribute('src')):
+         withphoto += 1
+
+   # Хотя бы у половины питомцев есть фото.
+   assert petcount/withphoto <= 2
+
+
+   # У всех питомцев есть имя, возраст и порода.
 
 
