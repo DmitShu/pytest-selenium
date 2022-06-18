@@ -41,12 +41,12 @@ def test_chk_my_pets():
    petcount = int(petcount.split('Питомцев: ')[1])
 
    images = pytest.driver.find_elements_by_css_selector('.table-hover tbody th img')
-   data = pytest.driver.find_elements_by_css_selector('.table-hover tbody tr')
+   data = pytest.driver.find_elements_by_css_selector('.table-hover tbody tr td')
 
 
    # Присутствуют все питомцы.
-   assert len(images) == petcount
-
+   assert petcount > 0, "Питомцев нет"
+   assert len(data)/4 == petcount, "В таблице не все питомцы"
 
    # Хотя бы у половины питомцев есть фото.
    withphoto = 0
@@ -55,9 +55,36 @@ def test_chk_my_pets():
          withphoto += 1
 
    # Хотя бы у половины питомцев есть фото.
-   assert petcount/withphoto <= 2
+   assert petcount/withphoto <= 2, "Фото есть меньше чем у половины питомцев"
 
+   # Обработка данных
+   names = []
+   breeds = []
+   ages = []
+   cnt = 0
+   for i in range(len(data)):
+      cnt += 1
+      if cnt == 1:
+         names.append(data[i].text)
+      if cnt == 2:
+         breeds.append(data[i].text)
+      if cnt == 3:
+         ages.append(data[i].text)
+      if cnt == 4:
+         cnt = 0
 
    # У всех питомцев есть имя, возраст и порода.
+   assert '' not in names, "Есть не все имена"
+   assert '' not in breeds, "Есть не все породы"
+   assert '' not in ages, "Есть не все возрасты"
 
+   # У всех питомцев разные имена.
+   assert len(names) == len(list(set(names))), "Есть повторяшки имена"
 
+   # В списке нет повторяющихся питомцев.
+   data = pytest.driver.find_elements_by_css_selector('.table-hover tbody tr')
+   datal = []
+   for i in range(len(data)):
+      datal.append(data[i].text)
+   # В списке нет повторяющихся питомцев.
+   assert len(datal) == len(list(set(datal))), "Есть повторяшки"
