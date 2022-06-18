@@ -1,5 +1,5 @@
 # Тест проверяет, что на странице со списком питомцев пользователя:
-#
+
 # Присутствуют все питомцы.
 # Хотя бы у половины питомцев есть фото.
 # У всех питомцев есть имя, возраст и порода.
@@ -36,16 +36,17 @@ def testing():
 
 def test_chk_my_pets():
 
-   # time.sleep(3)
+   # Получаем число питомцев с формы
    petcount = pytest.driver.find_element_by_css_selector('.\\.col-sm-4.left').text.split('\n')[1]
    petcount = int(petcount.split('Питомцев: ')[1])
 
+   # Получаем картинки и данные из таблицы
    images = pytest.driver.find_elements_by_css_selector('.table-hover tbody th img')
    data = pytest.driver.find_elements_by_css_selector('.table-hover tbody tr td')
 
 
    # Присутствуют все питомцы.
-   assert petcount > 0, "Питомцев нет"
+   assert petcount > 0, "Питомцев нет. Не чего проверять."
    assert len(data)/4 == petcount, "В таблице не все питомцы"
 
    # Хотя бы у половины питомцев есть фото.
@@ -57,7 +58,7 @@ def test_chk_my_pets():
    # Хотя бы у половины питомцев есть фото.
    assert petcount/withphoto <= 2, "Фото есть меньше чем у половины питомцев"
 
-   # Обработка данных
+   # Обработка данных для тестов
    names = []
    breeds = []
    ages = []
@@ -74,12 +75,12 @@ def test_chk_my_pets():
          cnt = 0
 
    # У всех питомцев есть имя, возраст и порода.
-   assert '' not in names, "Есть не все имена"
-   assert '' not in breeds, "Есть не все породы"
-   assert '' not in ages, "Есть не все возрасты"
+   assert '' not in names, "Не у всех питомцев есть имена"
+   assert '' not in breeds, "Не у всех питомцев есть порода"
+   assert '' not in ages, "Не у всех питомцев есть возраст"
 
    # У всех питомцев разные имена.
-   assert len(names) == len(list(set(names))), "Есть повторяшки имена"
+   assert len(names) == len(list(set(names))), "Есть имена повторяшки"
 
    # В списке нет повторяющихся питомцев.
    data = pytest.driver.find_elements_by_css_selector('.table-hover tbody tr')
@@ -87,4 +88,4 @@ def test_chk_my_pets():
    for i in range(len(data)):
       datal.append(data[i].text)
    # В списке нет повторяющихся питомцев.
-   assert len(datal) == len(list(set(datal))), "Есть повторяшки"
+   assert len(datal) == len(list(set(datal))), "Есть повторяшки среди питомцев"
