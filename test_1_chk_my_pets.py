@@ -79,8 +79,6 @@ def test_chk_my_pets():
    assert '' not in breeds, "Не у всех питомцев есть порода"
    assert '' not in ages, "Не у всех питомцев есть возраст"
 
-   # У всех питомцев разные имена.
-   assert len(names) == len(list(set(names))), "Есть имена повторяшки"
 
    # В списке нет повторяющихся питомцев.
    data = pytest.driver.find_elements_by_css_selector('.table-hover tbody tr')
@@ -88,4 +86,8 @@ def test_chk_my_pets():
    for i in range(len(data)):
       datal.append(data[i].text)
    # В списке нет повторяющихся питомцев.
-   assert len(datal) == len(list(set(datal))), "Есть повторяшки среди питомцев"
+   assert len(datal) == len(list(set(datal))), f"Есть повторяшки среди питомцев: {datal}"
+
+
+   # У всех питомцев разные имена.
+   assert len(names) == len(list(set(names))), f"Есть имена повторяшки: {names}"
