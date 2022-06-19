@@ -9,6 +9,9 @@
 import pytest
 from selenium import webdriver
 from logins import *
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 @pytest.fixture(autouse=True, scope="module")
 def testing_preconditions():
@@ -16,31 +19,42 @@ def testing_preconditions():
    log = ''
 
    try:
-
+      # Настройки драйвера
       # pytest.driver = webdriver.Firefox()
+      options = webdriver.ChromeOptions()
+      options.add_experimental_option('excludeSwitches', ['enable-logging'])
       pytest.driver = webdriver.ChromeOptions.binary_location = 'C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe'
-      pytest.driver = webdriver.Chrome('driver/chromedriver.exe')
+      pytest.driver = webdriver.Chrome('driver/chromedriver.exe', options=options)
       log += 'driver+'
+
+      # неявноe ожидания для всех тестов
+      pytest.driver.implicitly_wait(5)
+
       # Переходим на страницу авторизации
       pytest.driver.get(url + 'login')
       log += ' main page+'
+
       # Вводим email
-      pytest.driver.find_element_by_id('email').send_keys(valid_email)
+      WebDriverWait(pytest.driver, 3).until(EC.visibility_of_element_located((By.ID, "email"))).send_keys(valid_email)
       log += ' email+'
+
       # Вводим пароль
-      pytest.driver.find_element_by_id('pass').send_keys(valid_password)
+      WebDriverWait(pytest.driver, 3).until(EC.visibility_of_element_located((By.ID, "pass"))).send_keys(valid_password)
       log += ' pass+'
+
       # Нажимаем на кнопку входа в аккаунт
-      pytest.driver.find_element_by_css_selector('button[type="submit"]').click()
+      WebDriverWait(pytest.driver, 3).until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'button[type="submit"]'))).click()
+      # pytest.driver.find_element_by_css_selector('button[type="submit"]').click()
       log += ' click+'
+
       # Переходим к таблице
       pytest.driver.get(url + 'my_pets')
       log += ' my_pets+'
-      # Проверяем, что мы оказались на главной странице пользователя и есть питомцы
-      if len(pytest.driver.find_elements_by_css_selector('.table-hover tbody th img')) > 0:
 
-         #Получаем данные и отправляем в тесты.
+      # Проверяем, что у пользователя есть таблица, и она не пустая
+      if len(WebDriverWait(pytest.driver, 3).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, '.table-hover tbody th img')))) > 0:
 
+         #Можно Запускать тесты.
          yield
 
       else:
@@ -57,8 +71,8 @@ def testing_preconditions():
 def test_1_check_pets_availability():
    # Проверяем, что присутствуют все питомцы.
 
-   # Получаем число питомцев с формы
-   petcount = pytest.driver.find_element_by_css_selector('.\\.col-sm-4.left').text.split('\n')[1]
+   # Получаем число питомцев с формы, проверяем, что оно отображается.
+   petcount = WebDriverWait(pytest.driver, 3).until(EC.visibility_of_element_located((By.CSS_SELECTOR, '.\\.col-sm-4.left'))).text.split('\n')[1]
    petcount = int(petcount.split('Питомцев: ')[1])
 
    # Получаем данные из таблицы
@@ -71,7 +85,7 @@ def test_1_check_pets_availability():
 def test_2_check_half_pets_with_photo():
    # Проверяем, что хотя бы у половины питомцев есть фото.
 
-   # Получаем изображения с формы
+   # Получаем изображения с формы, убеждаемся, что они все видны
    images = pytest.driver.find_elements_by_css_selector('.table-hover tbody th img')
    img = 0
    for i in range(len(images)):
