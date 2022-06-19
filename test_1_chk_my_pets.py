@@ -1,10 +1,12 @@
-# Тест проверяет, что на странице со списком питомцев пользователя:
+"""
+Тест проверяет, что на странице со списком питомцев пользователя:
 
-# 1 Присутствуют все питомцы.
-# 2 Хотя бы у половины питомцев есть фото.
-# 3 У всех питомцев есть имя, возраст и порода.
-# 4 У всех питомцев разные имена.
-# 5 В списке нет повторяющихся питомцев.
+1 Присутствуют все питомцы.
+2 Хотя бы у половины питомцев есть фото.
+3 У всех питомцев есть имя, возраст и порода.
+4 У всех питомцев разные имена.
+5 В списке нет повторяющихся питомцев.
+"""
 
 import pytest
 from selenium import webdriver
@@ -13,6 +15,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+
+# Подготавливаем тесты.
 @pytest.fixture(autouse=True, scope="module")
 def testing_preconditions():
 
@@ -68,8 +72,8 @@ def testing_preconditions():
       pytest.driver.quit()
 
 
+# Проверяем, что присутствуют все питомцы.
 def test_1_check_pets_availability():
-   # Проверяем, что присутствуют все питомцы.
 
    # Получаем число питомцев с формы, проверяем, что оно отображается.
    petcount = WebDriverWait(pytest.driver, 3).until(EC.visibility_of_element_located((By.CSS_SELECTOR, '.\\.col-sm-4.left'))).text.split('\n')[1]
@@ -79,11 +83,11 @@ def test_1_check_pets_availability():
    data = pytest.driver.find_elements_by_css_selector('.table-hover tbody tr td')
 
    # Присутствуют все питомцы.
-   assert len(data)/4 == petcount, "В таблице не все питомцы"
+   assert len(data)/4 == petcount, "В таблице находятся не все питомцы."
 
 
+# Проверяем, что хотя бы у половины питомцев есть фото.
 def test_2_check_half_pets_with_photo():
-   # Проверяем, что хотя бы у половины питомцев есть фото.
 
    # Получаем изображения с формы, убеждаемся, что они есть в табличке
    images = WebDriverWait(pytest.driver, 3).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, '.table-hover tbody th img')))
@@ -93,11 +97,11 @@ def test_2_check_half_pets_with_photo():
          img += 1
 
    # Хотя бы у половины питомцев есть фото.
-   assert (i+1)/img <= 2, "Фото есть меньше чем у половины питомцев"
+   assert (i+1)/img <= 2, "Фото есть меньше чем у половины питомцев."
 
 
+# Проверяем, что у всех питомцев есть имя, возраст и порода.
 def test_3_check_pets_data():
-   # Проверяем, что у всех питомцев есть имя, возраст и порода.
 
    # Получаем данные из таблицы
    data = pytest.driver.find_elements_by_css_selector('.table-hover tbody tr td')
@@ -117,14 +121,16 @@ def test_3_check_pets_data():
       if cnt == 4:
          cnt = 0
 
-   # У всех питомцев есть имя, возраст и порода.
-   assert '' not in names, "Не у всех питомцев есть имена"
-   assert '' not in breeds, "Не у всех питомцев есть порода"
-   assert '' not in ages, "Не у всех питомцев есть возраст"
+   # У всех питомцев есть имя.
+   assert '' not in names, f"Не у всех питомцев есть имя: {names}."
+   # У всех питомцев есть порода.
+   assert '' not in breeds, f"Не у всех питомцев есть порода: {breeds}."
+   # У всех питомцев возраст.
+   assert '' not in ages, f"Не у всех питомцев есть возраст: {ages}."
 
 
+# Проверяем, что у всех питомцев имена уникальные.
 def test_4_check_no_clones_names():
-   # Проверяем, что у всех питомцев имена уникальные.
 
    # Получаем данные из таблицы
    data = pytest.driver.find_elements_by_css_selector('.table-hover tbody tr td')
@@ -139,11 +145,11 @@ def test_4_check_no_clones_names():
          cnt = 0
 
    # У всех питомцев разные имена.
-   assert len(names) == len(list(set(names))), f"Есть имена повторяшки: {names}"
+   assert len(names) == len(list(set(names))), f"Есть имена повторяшки: {names}."
 
 
+# Проверяем, что в списке нет повторяющихся питомцев.
 def test_5_check_no_clones_pets():
-   # Проверяем, что в списке нет повторяющихся питомцев.
 
    # Получаем данные из таблицы
    data = pytest.driver.find_elements_by_css_selector('.table-hover tbody tr')
@@ -152,4 +158,4 @@ def test_5_check_no_clones_pets():
       datal.append(data[i].text)
 
    # В списке нет повторяющихся питомцев.
-   assert len(datal) == len(list(set(datal))), f"Есть повторяшки среди питомцев: {datal}"
+   assert len(datal) == len(list(set(datal))), f"Есть повторяшки среди питомцев: {datal}."
