@@ -10,6 +10,7 @@
 
 import pytest
 from selenium import webdriver
+from datetime import datetime
 from logins import *
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -20,53 +21,48 @@ from selenium.webdriver.support import expected_conditions as EC
 @pytest.fixture(autouse=True, scope="module")
 def testing_preconditions():
 
-   log = ''
-
    try:
       # Настройки драйвера
       # pytest.driver = webdriver.Firefox()
+      err = ''
       options = webdriver.ChromeOptions()
       options.add_experimental_option('excludeSwitches', ['enable-logging'])
       pytest.driver = webdriver.ChromeOptions.binary_location = 'C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe'
       pytest.driver = webdriver.Chrome('driver/chromedriver.exe', options=options)
-      log += 'driver+'
 
       # неявноe ожидания для всех тестов
       pytest.driver.implicitly_wait(5)
 
       # Переходим на страницу авторизации
       pytest.driver.get(url + 'login')
-      log += ' login page+'
 
       # Вводим email
+      err = 'Не найдено поле "email".'
       WebDriverWait(pytest.driver, 3).until(EC.visibility_of_element_located((By.ID, "email"))).send_keys(valid_email)
-      log += ' email+'
 
       # Вводим пароль
+      err = 'Не найдено поле "pass".'
       WebDriverWait(pytest.driver, 3).until(EC.visibility_of_element_located((By.ID, "pass"))).send_keys(valid_password)
-      log += ' pass+'
 
       # Нажимаем на кнопку входа в аккаунт
+      err = 'Не найдена кнопка "submit".'
       WebDriverWait(pytest.driver, 3).until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'button[type="submit"]'))).click()
       # pytest.driver.find_element_by_css_selector('button[type="submit"]').click()
-      log += ' click+'
 
       # Переходим к таблице
       pytest.driver.get(url + 'my_pets')
-      log += ' my_pets+'
 
       # Проверяем, что у пользователя есть таблица, и она не пустая
-      if len(WebDriverWait(pytest.driver, 3).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, '.table-hover tbody th img')))) > 0:
+      err = 'Таблица питомцев пуста или отсутствует.'
+      WebDriverWait(pytest.driver, 3).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, '.table-hover tbody th img')))
 
-         #Предусловия выполнены, можно запускать тесты.
-         yield
-
-      else:
-         log += ' Не найдены питомцы'
-         raise AssertionError()
+      #Предусловия выполнены, можно запускать тесты.
+      yield
 
    except:
-      raise AssertionError(f'Не удалось подготовить тест / {log}.')
+      if err != '':
+         pytest.driver.save_screenshot('screenshots/'+ str(datetime.now()).replace(':', '_')+ '_error.png')
+      raise AssertionError(f'Не удалось подготовить тест / {err}')
 
    finally:
       pytest.driver.quit()
@@ -97,7 +93,7 @@ def test_2_check_half_pets_with_photo():
          img += 1
 
    # Хотя бы у половины питомцев есть фото.
-   assert (i+1)/img <= 2, "Фото есть меньше чем у половины питомцев."
+   assert img/(i+1) >= 0.5, "Фото есть меньше чем у половины питомцев."
 
 
 # Проверяем, что у всех питомцев есть имя, возраст и порода.
