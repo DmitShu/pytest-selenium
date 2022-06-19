@@ -85,8 +85,8 @@ def test_1_check_pets_availability():
 def test_2_check_half_pets_with_photo():
    # Проверяем, что хотя бы у половины питомцев есть фото.
 
-   # Получаем изображения с формы, убеждаемся, что они все видны
-   images = pytest.driver.find_elements_by_css_selector('.table-hover tbody th img')
+   # Получаем изображения с формы, убеждаемся, что они есть в табличке
+   images = WebDriverWait(pytest.driver, 3).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, '.table-hover tbody th img')))
    img = 0
    for i in range(len(images)):
       if (images[i].get_attribute('src')):
