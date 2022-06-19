@@ -1,10 +1,10 @@
 # Тест проверяет, что на странице со списком питомцев пользователя:
 
-# Присутствуют все питомцы.
-# Хотя бы у половины питомцев есть фото.
-# У всех питомцев есть имя, возраст и порода.
-# У всех питомцев разные имена.
-# В списке нет повторяющихся питомцев.
+# 1 Присутствуют все питомцы.
+# 2 Хотя бы у половины питомцев есть фото.
+# 3 У всех питомцев есть имя, возраст и порода.
+# 4 У всех питомцев разные имена.
+# 5 В списке нет повторяющихся питомцев.
 
 import pytest
 from selenium import webdriver
@@ -32,7 +32,7 @@ def testing_preconditions():
 
       # Переходим на страницу авторизации
       pytest.driver.get(url + 'login')
-      log += ' main page+'
+      log += ' login page+'
 
       # Вводим email
       WebDriverWait(pytest.driver, 3).until(EC.visibility_of_element_located((By.ID, "email"))).send_keys(valid_email)
@@ -54,7 +54,7 @@ def testing_preconditions():
       # Проверяем, что у пользователя есть таблица, и она не пустая
       if len(WebDriverWait(pytest.driver, 3).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, '.table-hover tbody th img')))) > 0:
 
-         #Можно Запускать тесты.
+         #Предусловия выполнены, можно запускать тесты.
          yield
 
       else:
