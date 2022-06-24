@@ -7,7 +7,7 @@ import time
 def testing():
    # pytest.driver = webdriver.Firefox()
    pytest.driver = webdriver.ChromeOptions.binary_location = 'C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe'
-   pytest.driver = webdriver.Chrome('driver/chromedriver.exe')
+   pytest.driver = webdriver.Chrome('D:/Work/web_driver/chromedriver.exe')
    # Переходим на страницу авторизации
    pytest.driver.get(url+'login')
 

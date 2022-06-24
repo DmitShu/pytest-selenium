@@ -28,7 +28,7 @@ def testing_preconditions():
       options = webdriver.ChromeOptions()
       options.add_experimental_option('excludeSwitches', ['enable-logging'])
       pytest.driver = webdriver.ChromeOptions.binary_location = 'C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe'
-      pytest.driver = webdriver.Chrome('driver/chromedriver.exe', options=options)
+      pytest.driver = webdriver.Chrome('D:/Work/web_driver/chromedriver.exe', options=options)
 
       # неявноe ожидания для всех тестов
       pytest.driver.implicitly_wait(5)
